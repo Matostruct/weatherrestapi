@@ -14,7 +14,13 @@ Einfacher REST-Service, der mithilfe der Weatherstack-API die aktuelle Temperatu
 
 ## Konfiguration
 Erwartete Umgebungsvariablen:
-- `WEATHERSTACK_API_KEY` – persönlicher API Key
+- `.env` im Projekt-Root anlegen
+- Inhalt der `.env`:
+  ```text
+  WEATHERAPI_KEY=<dein-key>
+  ```
+
+- Inhalt der `application.properties` (bereits vorhanden):
 - `PORT` – optionaler HTTP-Port der Anwendung (Default z. B. 3000)
 
 ## Lokale Ausführung (Beispiel)
