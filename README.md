@@ -47,18 +47,26 @@ Alternative ohne `.env`:
 docker run -e WEATHERAPI_KEY=<dein-key> -p 3000:3000 weatherrestapi:latest
 ```
 
-### GitLab Container Registry (Uni-GitLab)
-Beispiel (Platzhalter an eure Uni-GitLab-URL/Projekt anpassen):
-```bash
-docker login <gitlab-registry-host>
-docker tag weatherrestapi:latest <gitlab-registry-host>/<group>/<project>/weatherrestapi:latest
-docker push <gitlab-registry-host>/<group>/<project>/weatherrestapi:latest
-```
+### GitHub Container Registry (GHCR)
+Image (bereits gepusht):
+- `ghcr.io/matostruct/weatherrestapi/weatherrestapi:latest`
+
+Package-Übersicht auf GitHub:
+- https://github.com/matostruct?tab=packages
+
 Pull & Run (für Tester:innen/App-Entwickler:innen):
 ```bash
-docker pull <gitlab-registry-host>/<group>/<project>/weatherrestapi:latest
-docker run --env-file .env -p 3000:3000 <gitlab-registry-host>/<group>/<project>/weatherrestapi:latest
+docker pull ghcr.io/matostruct/weatherrestapi/weatherrestapi:latest
+docker run --env-file .env -p 3000:3000 ghcr.io/matostruct/weatherrestapi/weatherrestapi:latest
 ```
+
+Falls das Package privat ist:
+1. GitHub → dein Profil → Packages → Package öffnen → **Package settings** → **Change visibility** → **Public**
+2. Alternativ (privat lassen): Nutzer:innen müssen sich einloggen:
+```bash
+docker login ghcr.io -u <github-username>
+```
+Passwort = GitHub Personal Access Token (PAT) mit `read:packages` (Pull) bzw. `write:packages` (Push).
 
 ## API-Nutzung
 - **Endpoint:** `GET /weather?city=Vienna`
@@ -130,7 +138,7 @@ Erwartet: HTTP 200 und JSON mit Feld `location`.
 
 ## Continuous Delivery (Vorschlag)
 - Linter/Testlauf (z. B. `npm test`) auf jedem Push.
-- Docker-Build & Push in die GitLab Container Registry per CI-Workflow.
+- Docker-Build & Push in die GitHub Container Registry (GHCR) per GitHub Actions.
 - Optional: automatischer Deploy in Staging-Umgebung (z. B. Render/Heroku/Kubernetes Namespace).
 
 ## Team
