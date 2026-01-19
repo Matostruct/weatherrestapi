@@ -94,7 +94,7 @@ docker run --env-file .env -p 3000:3000 <gitlab-registry-host>/<group>/<project>
 ```
 - **Fehlerfälle:**
 	- 400 bei fehlendem Parameter `city`
-    - 403 – API Key fehlt oder ungültig
+  - 403 – API Key fehlt oder ungültig
 	- 404 falls Stadt nicht gefunden
 	- 502 falls OpenWeather nicht erreichbar
 
