@@ -21,7 +21,7 @@ Erwartete Umgebungsvariablen:
   ```
 
 - Inhalt der `application.properties` (bereits vorhanden):
-- `PORT` – optionaler HTTP-Port der Anwendung (Default z. B. 3000)
+- `PORT` – optionaler HTTP-Port der Anwendung (Default: 3000)
 
 ## Lokale Ausführung (Beispiel)
 1. `.env` anlegen und API-Key setzen:
@@ -32,6 +32,33 @@ Erwartete Umgebungsvariablen:
 	 ```bash
 	 mvn spring-boot:run
 	 ```
+
+## Docker
+Build:
+```bash
+docker build -t weatherrestapi:latest .
+```
+Run (mit `.env`):
+```bash
+docker run --env-file .env -p 3000:3000 weatherrestapi:latest
+```
+Alternative ohne `.env`:
+```bash
+docker run -e WEATHERAPI_KEY=<dein-key> -p 3000:3000 weatherrestapi:latest
+```
+
+### GitLab Container Registry (Uni-GitLab)
+Beispiel (Platzhalter an eure Uni-GitLab-URL/Projekt anpassen):
+```bash
+docker login <gitlab-registry-host>
+docker tag weatherrestapi:latest <gitlab-registry-host>/<group>/<project>/weatherrestapi:latest
+docker push <gitlab-registry-host>/<group>/<project>/weatherrestapi:latest
+```
+Pull & Run (für Tester:innen/App-Entwickler:innen):
+```bash
+docker pull <gitlab-registry-host>/<group>/<project>/weatherrestapi:latest
+docker run --env-file .env -p 3000:3000 <gitlab-registry-host>/<group>/<project>/weatherrestapi:latest
+```
 
 ## API-Nutzung
 - **Endpoint:** `GET /weather?city=Vienna`
@@ -103,9 +130,11 @@ Erwartet: HTTP 200 und JSON mit Feld `location`.
 
 ## Continuous Delivery (Vorschlag)
 - Linter/Testlauf (z. B. `npm test`) auf jedem Push.
-- Docker-Build & Push in ein Container-Registry (z. B. GitHub Container Registry) per CI-Workflow.
+- Docker-Build & Push in die GitLab Container Registry per CI-Workflow.
 - Optional: automatischer Deploy in Staging-Umgebung (z. B. Render/Heroku/Kubernetes Namespace).
 
 ## Team
 - Patrick Riedler
 - Matio Tawdrous
+- Paria Nikparsa
+- Erdem Firdevs
