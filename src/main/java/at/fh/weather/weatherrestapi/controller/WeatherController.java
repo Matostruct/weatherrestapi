@@ -1,5 +1,6 @@
 package at.fh.weather.weatherrestapi.controller;
 
+import at.fh.weather.weatherrestapi.dto.WeatherResponse;
 import at.fh.weather.weatherrestapi.service.WeatherApiClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,11 @@ public class WeatherController {
         this.weatherApiClient = weatherApiClient;
     }
 
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
+
     @GetMapping("/weather")
     public ResponseEntity<?> getWeather(@RequestParam(required = false) String city) {
         if (city == null || city.isBlank()) {
@@ -30,7 +36,8 @@ public class WeatherController {
 
         try {
             Map<String, Object> weather = weatherApiClient.getCurrentWeather(city);
-            return ResponseEntity.ok(weather);
+            WeatherResponse response = parseWeatherResponse(weather);
+            return ResponseEntity.ok(response);
         } catch (HttpClientErrorException e) {
             Map<String, Object> error = new HashMap<>();
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
@@ -56,5 +63,21 @@ public class WeatherController {
             error.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
+    }
+
+    private WeatherResponse parseWeatherResponse(Map<String, Object> apiResponse) {
+        Map<String, Object> location = (Map<String, Object>) apiResponse.get("location");
+        Map<String, Object> current = (Map<String, Object>) apiResponse.get("current");
+        Map<String, Object> condition = (Map<String, Object>) current.get("condition");
+
+        return new WeatherResponse(
+                (String) location.get("name"),
+                (String) location.get("country"),
+                ((Number) current.get("temp_c")).doubleValue(),
+                (String) condition.get("text"),
+                ((Number) current.get("humidity")).intValue(),
+                ((Number) current.get("wind_kph")).doubleValue(),
+                (String) current.get("last_updated")
+        );
     }
 }
